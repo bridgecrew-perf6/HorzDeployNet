@@ -73,7 +73,8 @@ namespace HorzDeployNet
                     if (File.Exists(excelFile))
                     {
                         int iRet = 0;
-                        iRet = Read_Excel(excelFile, 3);
+                        gConfig.nthSheet = Convert.ToInt32(textSheetLoc.Text);
+                        iRet = Read_Excel(excelFile, gConfig.nthSheet);
                         if (iRet >= 0)
                         {
                             gConfig.status = 1;
@@ -267,7 +268,9 @@ namespace HorzDeployNet
 
 
                 //--- Load Option
-                string strSelectedFile = fileFullName + ".2nd";
+                int lastIndex = fileFullName.LastIndexOf('.');
+                var name = fileFullName.Substring(0, lastIndex);
+                string strSelectedFile = name + ".2nd";
                 if (File.Exists(strSelectedFile))
                     Load_Options(strSelectedFile);
             }
@@ -304,6 +307,16 @@ namespace HorzDeployNet
         {
             checkedListLine.Enabled = chkLine.Checked;
         }
+
+        private void textSheetLoc_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Serialize_Object();
+        }
     }
 
     //============================================================================================
@@ -332,7 +345,8 @@ namespace HorzDeployNet
         public int nSites;
         public int nLines;
         public bool bUptoPump;
-
+        public int nthSheet;
+        public bool oneSheet;    // only one sheet or not (default: 0)
         //--- house keeping
         public int status;      // 0: before read, 1:read
     }

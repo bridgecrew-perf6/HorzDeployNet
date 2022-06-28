@@ -99,7 +99,18 @@ namespace HorzDeployNet
             //전체 범위 (왼쪽 상단의 Cell부터 사용한 맨마지막 범위까지)
             Excel.Range totalRange = sheet.get_Range(sheet.get_Range("A1"), lastCell);
 
-            return (object[,])totalRange.get_Value();
+            object[,] result = null;
+            try
+            {
+                result = (object[,])totalRange.get_Value();
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = "[### ERROR] 데이타 읽기 오류. 입력 파일의 해당 Sheet를 확인하세요";
+                return null;
+            }
+
+            return result;
 
         }
 
@@ -115,6 +126,8 @@ namespace HorzDeployNet
             Deserialize_Object();
             textBoxFile.Text = gConfig.name_input_file; // "c:\\temp\\test2.xlsx";
             textNameSheet.Text = gConfig.name_sheet;
+            textSheetLoc.Text = gConfig.nthSheet.ToString();
+            checkOneSheet.Checked = gConfig.oneSheet;
             textNameOutputFile.Text = gConfig.name_output_file;
             chkPart.Checked = gConfig.bSelect_Part;
             chkSite.Checked = gConfig.bSelect_Site;
@@ -173,7 +186,7 @@ namespace HorzDeployNet
             }
             else
             {
-                OkPart = true; 
+                OkPart = true;
             }
 
             //--- check Site
@@ -273,37 +286,67 @@ namespace HorzDeployNet
         }
         private void Load_Options(string filename)
         {
-            int [] iValue = { 0, 0, 0, 0, 0, 0 };
-            string[] strValue = { "0", "0", "0", "0", "0", "0" };
+            int[] iValue = new int[100];
+
+            string[] strValue = { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                                   "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                                    "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                                     "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"};
+
             int iTest = 0;
+            int ix = 0;
+            int iCurValue = 0;
+            int iChecked = 0;
+            int iNo = 0;
 
             strValue = System.IO.File.ReadAllLines(filename);
 
-            for (int i = 0; i < 6; i++)
-            {
-                iValue[i] = Convert.ToInt32(strValue[i]);
-            }
+            //--- For Parts
+            iChecked = Convert.ToInt32(strValue[ix++]);
+            iNo = Convert.ToInt32(strValue[ix++]);
 
-            chkPart.Checked = iValue[0] != 0 ? true : false;
+            chkPart.Checked = iChecked != 0 ? true : false;
             for (int i = 0; i < gConfig.nParts; i++)
+                checkedListPart.SetItemChecked(i, false);
+
+            for (int i = 0; i < iNo; i++)
             {
-                iTest =  (iValue[1] >> i ) & 0x01;
-                checkedListPart.SetItemChecked(i, iTest == 0 ? false : true);    
-                
+                iCurValue = Convert.ToInt32(strValue[ix++]);
+                checkedListPart.SetItemChecked(iCurValue, true);
             }
 
-            chkSite.Checked = iValue[2] != 0 ? true : false;
+            //--- For Site
+            iChecked = Convert.ToInt32(strValue[ix++]);
+            iNo = Convert.ToInt32(strValue[ix++]);
+
+            chkSite.Checked = iChecked != 0 ? true : false;
             for (int i = 0; i < gConfig.nSites; i++)
+                checkedListSite.SetItemChecked(i, false);
+
+            for (int i = 0; i < iNo; i++)
             {
-                iTest = (iValue[3] >> i) & 0x01;
-                checkedListSite.SetItemChecked(i, iTest == 0 ? false : true);
+                iCurValue = Convert.ToInt32(strValue[ix++]);
+                checkedListSite.SetItemChecked(iCurValue, true);
             }
 
-            chkLine.Checked = iValue[4] != 0 ? true : false;
+            //--- For Line
+            iChecked = Convert.ToInt32(strValue[ix++]);
+            iNo = Convert.ToInt32(strValue[ix++]);
+
+            chkLine.Checked = iChecked != 0 ? true : false;
             for (int i = 0; i < gConfig.nLines; i++)
+                checkedListLine.SetItemChecked(i, false);
+
+            for (int i = 0; i < iNo; i++)
             {
-                iTest = (iValue[5] >> i) & 0x01;
-                checkedListLine.SetItemChecked(i, iTest == 0 ? false : true);
+                iCurValue = Convert.ToInt32(strValue[ix++]);
+                checkedListLine.SetItemChecked(iCurValue, true);
             }
         }
 
@@ -346,7 +389,7 @@ namespace HorzDeployNet
             strPart = data[6, 4].ToString();
             strSite = data[6, 5].ToString();
             strLine = data[6, 7].ToString();
-            if (strPart != "사업부" || strSite != "Site" || strLine !="라인")
+            if (strPart != "사업부" || strSite != "Site" || strLine != "라인")
             {
                 // Something Wrong
                 return;
@@ -398,9 +441,9 @@ namespace HorzDeployNet
             }
 
             //---- check/uncheck part, site, line
-            //     Read from ./last.lst.2nd
+            //     Read from ./last.2nd
             //     
-            string objName = Application.StartupPath + "\\last.lst.2nd";
+            string objName = Application.StartupPath + "\\last.2nd";
             if (File.Exists(objName))
                 Load_Options(objName);
 
@@ -412,7 +455,7 @@ namespace HorzDeployNet
         {
             if (File.Exists(strFilename) == false)
             {
-                return - 1;
+                return -1;
             }
 
             try
@@ -445,6 +488,10 @@ namespace HorzDeployNet
 
                     object_excel obj = new object_excel();
                     obj.data = GetTotalValue(workSheet);
+                    if (obj.data == null)
+                    {
+                        return -2;
+                    }
                     obj.title = workSheet.Name;
                     glstWorkSheet.Add(obj);
 
@@ -571,6 +618,8 @@ namespace HorzDeployNet
             gConfig.name_input_file = textBoxFile.Text;
             gConfig.name_output_file = textNameOutputFile.Text;
             gConfig.name_sheet = textNameSheet.Text;
+            gConfig.nthSheet = Convert.ToInt32(textSheetLoc.Text);
+            gConfig.oneSheet = checkOneSheet.Checked;
 
             //serialize
             string serializationFile = Path.Combine(Application.StartupPath, "cs_config.bin");
@@ -594,7 +643,8 @@ namespace HorzDeployNet
             if (gTimerType == 1)
             {
                 toolStripStatusLabel1.Text = "파일 읽는 중..., 잠시 기다리세요";
-            } else if (gTimerType == 2)
+            }
+            else if (gTimerType == 2)
             {
                 toolStripStatusLabel1.Text = "파일 생성중..., 잠시 기다리세요";
             }
@@ -613,36 +663,50 @@ namespace HorzDeployNet
 
             int i = 0;
             UInt32 uChecked = 0;
-            string strSelectedFile = filename + ".2nd";
+            int lastIndex = filename.LastIndexOf('.');
+            var name = filename.Substring(0, lastIndex);
+            string strSelectedFile = name + ".2nd";
             using (TextWriter tw = new StreamWriter(strSelectedFile))
             {
+
+                //--- Parts
                 uChecked = 0;
                 tw.WriteLine(chkPart.Checked ? "1" : "0");
                 for (i = 0; i < checkedListPart.Items.Count; i++)
+                    if (checkedListPart.GetItemChecked(i) == true)
+                        uChecked++;
+                tw.WriteLine(uChecked.ToString());
+                for (i = 0; i < checkedListPart.Items.Count; i++)
                 {
                     if (checkedListPart.GetItemChecked(i) == true)
-                        uChecked |= (UInt32)(1 << i);
+                        tw.WriteLine(i.ToString());
                 }
-                tw.WriteLine(uChecked.ToString());
 
+                //--- Sites
                 uChecked = 0;
                 tw.WriteLine(chkSite.Checked ? "1" : "0");
                 for (i = 0; i < checkedListSite.Items.Count; i++)
+                    if (checkedListSite.GetItemChecked(i) == true)
+                        uChecked++;
+                tw.WriteLine(uChecked.ToString());
+                for (i = 0; i < checkedListSite.Items.Count; i++)
                 {
                     if (checkedListSite.GetItemChecked(i) == true)
-                        uChecked |= (UInt32)(1 << i);
+                        tw.WriteLine(i.ToString());
                 }
-                tw.WriteLine(uChecked.ToString());
 
+                //--- Lines
                 uChecked = 0;
                 tw.WriteLine(chkLine.Checked ? "1" : "0");
                 for (i = 0; i < checkedListLine.Items.Count; i++)
+                    if (checkedListLine.GetItemChecked(i) == true)
+                        uChecked++;
+                tw.WriteLine(uChecked.ToString());
+                for (i = 0; i < checkedListLine.Items.Count; i++)
                 {
                     if (checkedListLine.GetItemChecked(i) == true)
-                        uChecked |= (UInt32)(1 << i);
+                        tw.WriteLine(i.ToString());
                 }
-                tw.WriteLine(uChecked.ToString());
-
             }
         }
 
@@ -719,7 +783,7 @@ namespace HorzDeployNet
                         strSite = glstWorkSheet[0].data[i, 5] != null ? glstWorkSheet[0].data[i, 5].ToString() : "YUYU";
                         strLine = glstWorkSheet[0].data[i, 7] != null ? glstWorkSheet[0].data[i, 7].ToString() : "YUYU";
                         if (IsIncludeInTheList(chkPart.Checked, checkedListPart, strPart,
-                                               chkSite.Checked, checkedListSite, strSite, 
+                                               chkSite.Checked, checkedListSite, strSite,
                                                chkLine.Checked, checkedListLine, strLine))
                         {
                             if (iStart == 0)
@@ -806,7 +870,30 @@ namespace HorzDeployNet
             rangeX.EntireColumn.Delete();
 
             if (workBook != null)
-                workBook.SaveAs(strFile);
+            {
+                //--- remove worksheet not used
+                if (gConfig.oneSheet == true)
+                {
+                    int index = 1;
+                    foreach (Excel.Worksheet workSheet in workBook.Worksheets)
+                    {
+                        if (index == gConfig.nthSheet)
+                        {
+                            var newbook = excelApp.Workbooks.Add(1);
+                            workSheet.Copy(newbook.Sheets[1]);
+                            newbook.Sheets[2].Delete();
+                            newbook.SaveAs(strFile);
+                            newbook.Close();
+                            break;
+                        }
+                        index++;
+                    }
+                }
+                else
+                {
+                    workBook.SaveAs(strFile);
+                }
+            }
             CloseExcelFile();
 
             return 1;
@@ -814,3 +901,4 @@ namespace HorzDeployNet
         }
     }
 }
+

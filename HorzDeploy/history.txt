@@ -1,0 +1,20 @@
+<2022.6.9. v1.1>
+
+
+1) Line option 추가하기
+	1) line list 구하기
+		* Process_WorkSheet() 함수에서 처리
+	2) config에 추가하기
+		* bSelect_Line, line_Names[], nLines추가
+	3) line 선택시 처리
+		* Write_Excel_Disorder()에서 처리
+	3) "저장"시 현재 옵션도 저장하기
+
+2) 옵션항목과 함께 자동선택 (6/14.화)
+
+
+3) 몇번째 sheet인지 지정
+
+4) 한 sheet만 저장
+
+

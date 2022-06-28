@@ -34,6 +34,7 @@
             this.btnWrite = new System.Windows.Forms.Button();
             this.textNameOutputFile = new System.Windows.Forms.TextBox();
             this.groupConfig = new System.Windows.Forms.GroupBox();
+            this.checkOneSheet = new System.Windows.Forms.CheckBox();
             this.checkedListLine = new System.Windows.Forms.CheckedListBox();
             this.chkLine = new System.Windows.Forms.CheckBox();
             this.textNameSheet = new System.Windows.Forms.TextBox();
@@ -43,6 +44,8 @@
             this.chkPump = new System.Windows.Forms.CheckBox();
             this.chkSite = new System.Windows.Forms.CheckBox();
             this.chkPart = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textSheetLoc = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -113,6 +116,7 @@
             // 
             // groupConfig
             // 
+            this.groupConfig.Controls.Add(this.checkOneSheet);
             this.groupConfig.Controls.Add(this.checkedListLine);
             this.groupConfig.Controls.Add(this.chkLine);
             this.groupConfig.Controls.Add(this.textNameSheet);
@@ -124,10 +128,21 @@
             this.groupConfig.Controls.Add(this.chkPart);
             this.groupConfig.Location = new System.Drawing.Point(15, 110);
             this.groupConfig.Name = "groupConfig";
-            this.groupConfig.Size = new System.Drawing.Size(435, 350);
+            this.groupConfig.Size = new System.Drawing.Size(435, 358);
             this.groupConfig.TabIndex = 5;
             this.groupConfig.TabStop = false;
             this.groupConfig.Text = "옵션설정";
+            // 
+            // checkOneSheet
+            // 
+            this.checkOneSheet.AutoSize = true;
+            this.checkOneSheet.BackColor = System.Drawing.SystemColors.Control;
+            this.checkOneSheet.Location = new System.Drawing.Point(8, 340);
+            this.checkOneSheet.Name = "checkOneSheet";
+            this.checkOneSheet.Size = new System.Drawing.Size(143, 16);
+            this.checkOneSheet.TabIndex = 11;
+            this.checkOneSheet.Text = "1개의 Sheet만 출력";
+            this.checkOneSheet.UseVisualStyleBackColor = false;
             // 
             // checkedListLine
             // 
@@ -151,7 +166,7 @@
             // 
             // textNameSheet
             // 
-            this.textNameSheet.Location = new System.Drawing.Point(167, 322);
+            this.textNameSheet.Location = new System.Drawing.Point(90, 311);
             this.textNameSheet.Name = "textNameSheet";
             this.textNameSheet.Size = new System.Drawing.Size(231, 21);
             this.textNameSheet.TabIndex = 6;
@@ -159,7 +174,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 325);
+            this.label1.Location = new System.Drawing.Point(6, 316);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(78, 12);
             this.label1.TabIndex = 5;
@@ -186,7 +201,7 @@
             // chkPump
             // 
             this.chkPump.AutoSize = true;
-            this.chkPump.Location = new System.Drawing.Point(9, 299);
+            this.chkPump.Location = new System.Drawing.Point(8, 289);
             this.chkPump.Name = "chkPump";
             this.chkPump.Size = new System.Drawing.Size(107, 16);
             this.chkPump.TabIndex = 2;
@@ -214,6 +229,23 @@
             this.chkPart.Text = "<사업부> 선택";
             this.chkPart.UseVisualStyleBackColor = true;
             this.chkPart.CheckedChanged += new System.EventHandler(this.chkPart_CheckedChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(183, 81);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(58, 12);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "th sheet";
+            // 
+            // textSheetLoc
+            // 
+            this.textSheetLoc.Location = new System.Drawing.Point(144, 72);
+            this.textSheetLoc.Name = "textSheetLoc";
+            this.textSheetLoc.Size = new System.Drawing.Size(33, 21);
+            this.textSheetLoc.TabIndex = 9;
+            this.textSheetLoc.TextChanged += new System.EventHandler(this.textSheetLoc_TextChanged);
             // 
             // label2
             // 
@@ -395,7 +427,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1304, 549);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.textSheetLoc);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.groupConfig);
             this.Controls.Add(this.textNameOutputFile);
@@ -406,7 +440,8 @@
             this.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "Form1";
-            this.Text = "항목편집 프로그램 (v1.0.1)";
+            this.Text = "항목편집 프로그램 (v1.1.0)";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.groupConfig.ResumeLayout(false);
             this.groupConfig.PerformLayout();
@@ -453,6 +488,9 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.CheckedListBox checkedListLine;
         private System.Windows.Forms.CheckBox chkLine;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textSheetLoc;
+        private System.Windows.Forms.CheckBox checkOneSheet;
     }
 }
 
